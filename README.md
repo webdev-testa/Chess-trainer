@@ -1,11 +1,22 @@
-# React + TypeScript + Vite
+# ♟️ Chess Trainer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive chess trainer with board play against Stockfish, tactical puzzles (daily & filtered), and an opening explorer.
 
-Currently, two official plugins are available:
+## 🚀 Quick Start (with Bun)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
+
+# Build for production
+bun run build
+
+# Preview build
+bun run preview
+```
 
 ## React Compiler
 

@@ -1,72 +1,78 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  color-scheme: dark;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Linear.app Design System Tokens */
+  --bg-canvas: #010102;              /* Deepest near-black canvas */
+  --bg-surface: #0f1011;             /* Charcoal panel base */
+  --bg-surface-elevated: #141516;    /* Elevated card surface */
+  --bg-surface-hover: #18191a;       /* Hover state */
+  --bg-surface-active: #191a1b;      /* Active state */
 
-  font-synthesis: none;
+  --border-subtle: #23252a;          /* Hairline border */
+  --border-strong: #34343a;          /* Hairline strong */
+  --border-tertiary: #3e3e44;        /* Hairline tertiary */
+  --border-focus: #5e6ad2;           /* Focus ring (Linear lavender) */
+
+  --text-primary: #f7f8f8;           /* Ink primary text */
+  --text-secondary: #d0d6e0;         /* Ink muted */
+  --text-muted: #8a8f98;             /* Ink subtle */
+  --text-tertiary: #62666d;          /* Ink tertiary */
+
+  --color-primary: #5e6ad2;          /* Linear signature lavender-indigo */
+  --color-primary-hover: #828fff;    /* Lavender hover */
+  --color-primary-light: #5e69d1;    /* Lavender focus */
+
+  --color-success: #27a644;          /* Semantic success */
+  --color-success-bg: rgba(39, 166, 68, 0.15);
+  --color-danger: #eb5757;           /* Semantic danger */
+  --color-danger-bg: rgba(235, 87, 87, 0.15);
+  --color-warning: #f2994a;          /* Semantic warning */
+  --color-warning-bg: rgba(242, 153, 74, 0.15);
+
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-body {
+html, body, #root {
+  height: 100%;
+  width: 100%;
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--bg-canvas);
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  font-size: 0.875rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[role="tab"]:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

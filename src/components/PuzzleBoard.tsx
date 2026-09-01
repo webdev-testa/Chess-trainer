@@ -99,6 +99,18 @@ export function PuzzleBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
 
+  // Keyboard shortcut: Escape to close upload modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showUploadModal) {
+        setShowUploadModal(false);
+        setUploadSuccessMessage(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showUploadModal]);
+
   // Piece drop logic (UCI comparison)
   const onDrop = (sourceSquare: string, targetSquare: string) => {
     if (status !== "playing" || !currentPuzzle || showSolution) return false;
@@ -254,7 +266,7 @@ export function PuzzleBoard() {
       <div className="sidebar" role="region" aria-label="Puzzle Sidebar">
         {/* Source Mode Selector */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider">
+          <label className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider">
             Puzzle Source
           </label>
           <div className="grid grid-cols-2 gap-1.5 bg-[var(--bg-surface-elevated)] p-1.5 rounded-lg border border-[var(--border-subtle)]">
@@ -343,7 +355,7 @@ export function PuzzleBoard() {
               <span className="font-semibold text-sm text-[var(--text-primary)] font-mono">
                 #{currentPuzzle.id}
               </span>
-              <span className="bg-[var(--color-primary)] text-white font-semibold px-2.5 py-0.5 rounded text-[11px] font-mono">
+              <span className="bg-[var(--color-primary)] text-white font-semibold px-2.5 py-0.5 rounded text-xs font-mono">
                 {currentPuzzle.rating} ELO
               </span>
             </div>
@@ -353,7 +365,7 @@ export function PuzzleBoard() {
               {currentPuzzle.themes.map((t) => (
                 <span
                   key={t}
-                  className="bg-[var(--bg-surface)] text-[var(--color-primary-hover)] border border-[var(--border-subtle)] text-[11px] font-medium px-2 py-0.5 rounded"
+                  className="bg-[var(--bg-surface)] text-[var(--color-primary-hover)] border border-[var(--border-subtle)] text-xs font-medium px-2 py-0.5 rounded"
                 >
                   {t}
                 </span>
@@ -369,7 +381,7 @@ export function PuzzleBoard() {
                 href={currentPuzzle.gameUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] text-[var(--color-primary-hover)] hover:underline mt-1.5 inline-block"
+                className="text-xs text-[var(--color-primary-hover)] hover:underline mt-1.5 inline-block"
               >
                 🔗 View original game on Lichess
               </a>
@@ -397,7 +409,7 @@ export function PuzzleBoard() {
         {source !== "daily" && (
           <div className="flex flex-col gap-2.5 p-3 bg-[var(--bg-surface-elevated)] rounded-lg border border-[var(--border-subtle)]">
             <div className="flex flex-col gap-1">
-              <label htmlFor="puzzle-theme-select" className="text-[11px] font-semibold text-[var(--text-muted)]">
+              <label htmlFor="puzzle-theme-select" className="text-xs font-semibold text-[var(--text-muted)]">
                 Tactical Theme
               </label>
               <select
@@ -416,7 +428,7 @@ export function PuzzleBoard() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label htmlFor="puzzle-rating-select" className="text-[11px] font-semibold text-[var(--text-muted)]">
+              <label htmlFor="puzzle-rating-select" className="text-xs font-semibold text-[var(--text-muted)]">
                 Rating Range
               </label>
               <select
@@ -452,7 +464,7 @@ export function PuzzleBoard() {
           <div className="border-t border-[var(--border-subtle)] pt-3 mt-auto flex flex-col gap-2">
             <div className="flex justify-between items-center text-xs">
               <span className="font-semibold text-[var(--text-secondary)]">Assistance</span>
-              <span className="text-[11px] font-medium text-[var(--text-muted)] px-2 py-0.5 rounded bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)]">
+              <span className="text-xs font-medium text-[var(--text-muted)] px-2 py-0.5 rounded bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)]">
                 Hints {hintLevel}/2
               </span>
             </div>
@@ -555,7 +567,7 @@ export function PuzzleBoard() {
                   ? "Importing & Classifying Puzzles..."
                   : "Click to Select or Drop Puzzle File"}
               </div>
-              <div className="text-[11px] text-[var(--text-muted)] mt-0.5">
+              <div className="text-xs text-[var(--text-muted)] mt-0.5">
                 Supports Lichess CSV, JSON arrays, and PGNs
               </div>
             </button>

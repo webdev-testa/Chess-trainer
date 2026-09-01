@@ -7,7 +7,7 @@ export interface StockfishEvaluation {
   whitePercentage: number; // 0 to 100
 }
 
-export function useStockfish(fen: string, depth = 15, enabled = true) {
+export function useStockfish(fen: string, depth = 15, enabled = true, skillLevel = 20) {
   const [bestMove, setBestMove] = useState<string | null>(null);
   const [evaluation, setEvaluation] = useState<StockfishEvaluation | null>(null);
   const workerRef = useRef<Worker | null>(null);
@@ -68,15 +68,16 @@ export function useStockfish(fen: string, depth = 15, enabled = true) {
     };
   }, []);
 
-  // Update ref and send FEN position when fen or depth changes
+  // Update ref and send FEN position when fen, depth, or skillLevel changes
   useEffect(() => {
     currentFenRef.current = fen;
     if (workerRef.current && fen && enabled) {
       workerRef.current.postMessage('stop');
+      workerRef.current.postMessage(`setoption name Skill Level value ${skillLevel}`);
       workerRef.current.postMessage(`position fen ${fen}`);
       workerRef.current.postMessage(`go depth ${depth}`);
     }
-  }, [fen, depth, enabled]);
+  }, [fen, depth, enabled, skillLevel]);
 
   return { bestMove, evaluation };
 }

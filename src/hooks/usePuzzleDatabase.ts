@@ -16,65 +16,43 @@ export interface PuzzleStats {
 
 const STATS_KEY = "chess_trainer_puzzle_stats";
 const IMPORTED_KEY = "chess_trainer_imported_puzzles";
-
-// IndexedDB Helper for Large Datasets
 const DB_NAME = "ChessTrainerPuzzlesDB";
 const STORE_NAME = "puzzles_store";
 
-function openPuzzlesDB(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: "id" });
-      }
+async function savePuzzlesToStorage(puzzles: Puzzle[]): Promise<void> {
+  try {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE_NAME, { keyPath: "id" });
+    req.onsuccess = () => {
+      const tx = req.result.transaction(STORE_NAME, "readwrite");
+      const store = tx.objectStore(STORE_NAME);
+      store.clear();
+      puzzles.forEach((p) => store.put(p));
     };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
+  } catch {
+    localStorage.setItem(IMPORTED_KEY, JSON.stringify(puzzles.slice(0, 500)));
+  }
 }
 
-async function savePuzzlesToIndexedDB(puzzles: Puzzle[]): Promise<void> {
-  try {
-    const db = await openPuzzlesDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    const store = tx.objectStore(STORE_NAME);
-    store.clear();
-    for (const p of puzzles) {
-      store.put(p);
-    }
-    return new Promise((resolve, reject) => {
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  } catch {
+async function loadPuzzlesFromStorage(): Promise<Puzzle[]> {
+  return new Promise((resolve) => {
     try {
-      localStorage.setItem(IMPORTED_KEY, JSON.stringify(puzzles.slice(0, 500)));
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => req.result.createObjectStore(STORE_NAME, { keyPath: "id" });
+      req.onsuccess = () => {
+        const getAll = req.result.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).getAll();
+        getAll.onsuccess = () => resolve(getAll.result || []);
+        getAll.onerror = () => resolve([]);
+      };
+      req.onerror = () => {
+        const local = localStorage.getItem(IMPORTED_KEY);
+        resolve(local ? JSON.parse(local) : []);
+      };
     } catch {
-      // ignore
+      const local = localStorage.getItem(IMPORTED_KEY);
+      resolve(local ? JSON.parse(local) : []);
     }
-  }
-}
-
-async function loadPuzzlesFromIndexedDB(): Promise<Puzzle[]> {
-  try {
-    const db = await openPuzzlesDB();
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const store = tx.objectStore(STORE_NAME);
-    const request = store.getAll();
-    return new Promise((resolve) => {
-      request.onsuccess = () => {
-        resolve(request.result || []);
-      };
-      request.onerror = () => {
-        resolve([]);
-      };
-    });
-  } catch {
-    const local = localStorage.getItem(IMPORTED_KEY);
-    return local ? JSON.parse(local) : [];
-  }
+  });
 }
 
 export function usePuzzleDatabase() {
@@ -95,7 +73,7 @@ export function usePuzzleDatabase() {
 
   // Load imported puzzles on mount
   useEffect(() => {
-    loadPuzzlesFromIndexedDB().then((puzzles) => {
+    loadPuzzlesFromStorage().then((puzzles) => {
       if (puzzles && puzzles.length > 0) {
         setImportedPuzzles(puzzles);
       }
@@ -137,7 +115,7 @@ export function usePuzzleDatabase() {
       const text = await file.text();
       const parsed = parseUniversalPuzzleFile(text, 10000);
       if (parsed.length > 0) {
-        await savePuzzlesToIndexedDB(parsed);
+        await savePuzzlesToStorage(parsed);
         setImportedPuzzles(parsed);
         setSource("imported");
       }
